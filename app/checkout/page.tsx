@@ -7,29 +7,40 @@ export default function CheckoutPage() {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
-    const handleCheckout = async () => {
+    const handleCOD = async () => {
         setLoading(true);
         setError('');
         try {
-            const res = await fetch('/api/checkout', {
+            const res = await fetch('/api/cod-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cart, email }),
             });
             const data = await res.json();
-            if (data.url) {
+            if (data.success) {
                 clearCart();
-                window.location.href = data.url;
+                setSuccess(true);
             } else {
-                setError(data.error || 'Checkout failed');
+                setError(data.error || 'Order failed');
             }
         } catch (err) {
-            setError('Checkout failed');
+            setError('Order failed');
         } finally {
             setLoading(false);
         }
     };
+
+    if (success) {
+        return (
+            <main className="max-w-xl mx-auto py-8 px-4 text-center">
+                <h1 className="text-2xl font-bold mb-4">Order Placed!</h1>
+                <p className="mb-4">Thank you for your order. We will contact you soon for delivery and payment.</p>
+                <a href="/" className="text-blue-600 hover:underline">Back to Home</a>
+            </main>
+        );
+    }
 
     return (
         <main className="max-w-xl mx-auto py-8 px-4">
@@ -45,11 +56,11 @@ export default function CheckoutPage() {
                 />
             </div>
             <button
-                onClick={handleCheckout}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                onClick={handleCOD}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
                 disabled={loading || !email || cart.length === 0}
             >
-                {loading ? 'Redirecting...' : 'Proceed to Payment'}
+                {loading ? 'Placing Order...' : 'Place Order (Cash on Delivery)'}
             </button>
             {error && <p className="text-red-600 mt-4">{error}</p>}
         </main>
