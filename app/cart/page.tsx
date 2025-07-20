@@ -1,3 +1,4 @@
+"use client";
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
